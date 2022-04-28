@@ -25,7 +25,10 @@ SECRET_KEY = '8-b*jwmqoip-4(jpu)pd1j8lt562vc()g*^vd_w29yuh9kkn0u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'www.kisman.pythonanywhere.com',
+    'kisman.pythonanywhere.com'
+]
 
 
 # Application definition
