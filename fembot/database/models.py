@@ -97,7 +97,7 @@ class Step(models.Model):
         verbose_name = 'Шаг'
         verbose_name_plural = 'Шаги'
         unique_together = ['country', 'name']
-        ordering = ['country', 'section', 'name']
+        ordering = ['country', 'section', 'changed']
 
     def __str__(self) -> str:
         return (f'({self.country}) {self.section} : {self.button_rus}')

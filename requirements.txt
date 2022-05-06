@@ -1,0 +1,13 @@
+Django==2.2.19
+django-modeladmin-reorder==0.3.1
+flake8==4.0.1
+importlib-metadata==4.2.0
+mccabe==0.6.1
+pycodestyle==2.8.0
+pyflakes==2.4.0
+python-dotenv==0.20.0
+pytz==2022.1
+sqlparse==0.4.2
+telegram==0.0.1
+typing_extensions==4.2.0
+zipp==3.8.0

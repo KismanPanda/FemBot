@@ -53,8 +53,16 @@ class StepAdmin(admin.ModelAdmin):
         ChildInline
     ]
     list_display_links = ('name', 'button_rus')
+    list_filter = (
+        ('country', admin.RelatedOnlyFieldListFilter),
+        'section'
+        )
 
 
 @admin.register(Transition)
 class TransitionAdmin(admin.ModelAdmin):
     list_display = ('parent', 'child')
+    list_filter = (
+        ('parent__country', admin.RelatedOnlyFieldListFilter),
+        'parent__section'
+        )
