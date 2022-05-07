@@ -1,7 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
+
+
+def validate_no_dbl_quotes(value):
+    if (value.find('"') != -1):
+        raise ValidationError('Замените двойные кавычки на одинарные.')
 
 
 class Language(models.Model):
@@ -62,15 +68,37 @@ class Step(models.Model):
         related_name='steps',
         verbose_name='Страна'
     )
-    name = models.CharField('Имя шага англ', max_length=60)
-    button_ukr = models.CharField('Кнопка на украинском', max_length=60)
-    button_rus = models.CharField('Кнопка на русском', max_length=60)
+    name = models.CharField(
+        'Имя шага англ',
+        max_length=30,
+        help_text=('Лучше начать с кода раздела "xxx_", ' +
+                   'только английские маленькие буквы и ' +
+                   'нижнее почеркивание. Чем короче тем лучше :)')
+    )
+    button_ukr = models.CharField(
+        'Кнопка на украинском',
+        max_length=46,
+        validators=[validate_no_dbl_quotes],
+        help_text='Максимум 46 символов'
+    )
+    button_rus = models.CharField(
+        'Кнопка на русском',
+        max_length=46,
+        validators=[validate_no_dbl_quotes],
+        help_text='Максимум 46 символов'
+    )
     text_ukr = models.TextField(
         'Текст на украинском',
         blank=True,
-        null=True
+        null=True,
+        validators=[validate_no_dbl_quotes],
+        help_text='Не используйте "двойные кавычки"!'
     )
-    text_rus = models.TextField('Текст на русском')
+    text_rus = models.TextField(
+        'Текст на русском',
+        validators=[validate_no_dbl_quotes],
+        help_text='Не используйте "двойные кавычки"!'
+    )
     file_ukr = models.FileField(
         'Файл на украинском',
         upload_to='files/',
