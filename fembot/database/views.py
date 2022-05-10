@@ -1,12 +1,19 @@
+import mimetypes
 import os
 
 from django.http import HttpResponse
-# from django.shortcuts import render
+from django.shortcuts import render
 from typing import List
 
 # Create your views here.
 
 from database.models import Country, Section, Step
+from fembot.settings import BASE_DIR
+
+
+def index(request):
+    template = 'database/index.html'
+    return render(request, template)
 
 
 def split_string(string: str, desired_length: int) -> List:
@@ -225,7 +232,12 @@ def make_dictionary(request):
                     'ДЕРЕВО ПО РАЗДЕЛАМ И СТРАНАМ ---------')
             f.closed
             print(f'{filename} - closed.')
-    return HttpResponse('look at the terminal')
+    file_path = os.path.join(BASE_DIR, filename)
+    path = open(file_path, 'r', encoding='utf-8')
+    mime_type, _ = mimetypes.guess_type(file_path)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response
 
 
 # возможно додлаю, если перейдём на библиотеку telegram
