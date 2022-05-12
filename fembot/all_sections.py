@@ -46,7 +46,10 @@ async def DEU_rus(message: Message):
     await bot.send_message(
         chat_id=message.from_user.id,
         reply_markup=DEU_chosen_service_rus,
-        text="Выберите вид помощи:")
+        parse_mode="html",
+        text=("Выберите вид помощи:\n\n"
+              "<i>Чтобы скопировать часть текста из сообщения, "
+              "нажмите на него долго дважды.</i>"))
 
 
 @dp.callback_query_handler(lambda c: c.data == "POL_rus")
@@ -54,7 +57,10 @@ async def POL_rus(message: Message):
     await bot.send_message(
         chat_id=message.from_user.id,
         reply_markup=POL_chosen_service_rus,
-        text="Выберите вид помощи:")
+        parse_mode="html",
+        text=("Выберите вид помощи:\n\n"
+              "<i>Чтобы скопировать часть текста из сообщения, "
+              "нажмите на него долго дважды.</i>"))
 
 
 @dp.callback_query_handler(lambda c: c.data == "DEU_ukr")
@@ -62,7 +68,10 @@ async def DEU_ukr(message: Message):
     await bot.send_message(
         chat_id=message.from_user.id,
         reply_markup=DEU_chosen_service_ukr,
-        text="Виберіть вид допомоги:")
+        parse_mode="html",
+        text=("Виберіть вид допомоги:\n\n"
+              "<i>Щоб скопіювати частину тексту з повідомлення, "
+              "натисніть на нього довго двічі.</i>"))
 
 
 @dp.callback_query_handler(lambda c: c.data == "POL_ukr")
@@ -70,7 +79,10 @@ async def POL_ukr(message: Message):
     await bot.send_message(
         chat_id=message.from_user.id,
         reply_markup=POL_chosen_service_ukr,
-        text="Виберіть вид допомоги:")
+        parse_mode="html",
+        text=("Виберіть вид допомоги:\n\n"
+              "<i>Щоб скопіювати частину тексту з повідомлення, "
+              "натисніть на нього довго двічі.</i>"))
 
 
 # --------- ЗДЕСЬ ДЕРЕВО ПО РАЗДЕЛАМ И СТРАНАМ ---------

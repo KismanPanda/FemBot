@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <body>
-    <a href="{% url 'database:make_dictionary' %}">Создать код из базы данных</a>
+    <p>
+        <a href="{% url 'database:make_dictionary' %}">Создать код из базы данных</a>
+    </p>
+    <p>
+        <a href="{% url 'database:download_for_excel' %}">Создать список шагов для excel</a>
+    </p>
 </body>
 </html>

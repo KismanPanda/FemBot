@@ -1,4 +1,6 @@
+import datetime as dt
 import mimetypes
+import pytz
 import os
 
 from django.http import HttpResponse
@@ -9,6 +11,8 @@ from typing import List
 
 from database.models import Country, Section, Step
 from fembot.settings import BASE_DIR
+
+utc = pytz.UTC
 
 
 def index(request):
@@ -40,6 +44,40 @@ def formatted(string: str) -> str:
         if formatted_text[-1] == '\\':
             formatted_text += '\\'
     return formatted_text
+
+
+def for_excel(request):
+    date_update = dt.datetime(2022, 5, 12)
+
+    if not date_update:
+        date_update = dt.datetime(2022, 1, 1)
+    steps = Step.objects.all()
+    filename = 'step_list.txt'
+    file_path = os.path.join(BASE_DIR, filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    with open(file_path, 'a', encoding='utf-8') as f:
+        f.write('"Страна";"Раздел";"Step_name";"Кнопка_рус";"Кнопка_укр";'
+                '"Текст_рус";"Текст_укр";"Дата изменения"\n')
+        for step in steps:
+            if (step.changed >= utc.localize(date_update)):
+                step_text_ru = (' ').join(step.text_rus.splitlines())
+                step_text_uk = (' ').join(step.text_ukr.splitlines())
+                step_date_update = step.changed.strftime('%Y-%m-%d')
+                f.write(f'"{step.country}";'
+                        f'"{step.section}";'
+                        f'"{step.name}";'
+                        f'"{step.button_rus}";'
+                        f'"{step.button_ukr}";'
+                        f'"{step_text_ru}";'
+                        f'"{step_text_uk}";'
+                        f'"{step_date_update}"\n')
+        f.closed
+    path = open(file_path, 'r', encoding='utf-8')
+    mime_type, _ = mimetypes.guess_type(file_path)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response
 
 
 def add_header():
@@ -118,11 +156,21 @@ def make_dictionary(request):
                     f'        chat_id=message.from_user.id,\n'
                     f'        reply_markup={country.code_iso}'
                     f'_chosen_service_{lang},\n'
+                    f'        parse_mode="html",\n'
                     )
                 if lang == 'ukr':
-                    f.write('        text="Виберіть вид допомоги:")\n')
+                    f.write('        text=("Виберіть вид допомоги:\\n\\n"\n')
+                    f.write('              "<i>Щоб скопіювати частину тексту '
+                            'з повідомлення, "\n')
+                    f.write('              "натисніть на нього довго '
+                            'двічі.</i>"))\n')
+
                 elif lang == 'rus':
-                    f.write('        text="Выберите вид помощи:")\n')
+                    f.write('        text=("Выберите вид помощи:\\n\\n"\n')
+                    f.write('              "<i>Чтобы скопировать часть текста '
+                            'из сообщения, "\n')
+                    f.write('              "нажмите на него долго '
+                            'дважды.</i>"))\n')
                 f.write('\n\n')
         f.write('# --------- ЗДЕСЬ ДЕРЕВО ПО РАЗДЕЛАМ И СТРАНАМ ---------\n')
         f.close()
