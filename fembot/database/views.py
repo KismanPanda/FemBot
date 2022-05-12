@@ -42,6 +42,14 @@ def formatted(string: str) -> str:
     return formatted_text
 
 
+def add_header():
+    pass
+
+
+def add_footer():
+    pass
+
+
 def make_dictionary(request):
     sections = Section.objects.exclude(steps__isnull=True)
     countries = Country.objects.exclude(steps__isnull=True).filter(active=True)
@@ -51,9 +59,13 @@ def make_dictionary(request):
         'ukr': 'украинский'
     }
 
-    os.remove('all_sections.py')
     filename = 'all_sections.py'
-    with open(filename, 'a', encoding='utf-8') as f:
+    file_path = os.path.join(BASE_DIR, filename)
+    print(file_path)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    with open(file_path, 'a', encoding='utf-8') as f:
         f.write('# --------- ЗДЕСЬ ВЫБОР СТРАНЫ И РАЗДЕЛА ---------\n')
         # Формируем клавиатуру с выбором страны
         # (только те, по которым есть инфа и они активны)
@@ -117,11 +129,11 @@ def make_dictionary(request):
 
     for section in sections:
         # filename = f'section_{section.code}.py'
-        filename = 'all_sections.py'
-        print(filename)
+        # filename = 'all_sections.py'
+        print(f'{filename} - opened.')
         print(section)
         # with open(filename, 'w', encoding='utf-8') as f:
-        with open(filename, 'a', encoding='utf-8') as f:
+        with open(file_path, 'a', encoding='utf-8') as f:
             f.write(f'# ------- РАЗДЕЛ: {section.name_rus.upper()} -------\n')
             for country in countries:
                 print(country)
@@ -196,14 +208,15 @@ def make_dictionary(request):
                                 f'    await bot.send_message(\n'
                                 f'        chat_id=message.from_user.id,\n'
                                 f'        reply_markup={keyboard_name},\n'
+                                f'        parse_mode="html",\n'
                                 f'        text=')
                         if lang == 'rus':
                             step_text_lang = step.text_rus
                         elif lang == 'ukr':
                             if step.text_ukr == '':
                                 step_text_lang = (
-                                    '(Вибачте, ця інформація є' +
-                                    'тільки російською мовою)\\n' +
+                                    '<i>(Вибачте, ця інформація є' +
+                                    'тільки російською мовою)</i>\\n' +
                                     step.text_rus
                                 )
                             else:
@@ -232,7 +245,7 @@ def make_dictionary(request):
                     'ДЕРЕВО ПО РАЗДЕЛАМ И СТРАНАМ ---------')
             f.closed
             print(f'{filename} - closed.')
-    file_path = os.path.join(BASE_DIR, filename)
+    # file_path = os.path.join(BASE_DIR, filename)
     path = open(file_path, 'r', encoding='utf-8')
     mime_type, _ = mimetypes.guess_type(file_path)
     response = HttpResponse(path, content_type=mime_type)
