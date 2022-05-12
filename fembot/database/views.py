@@ -80,12 +80,24 @@ def for_excel(request):
     return response
 
 
-def add_header():
-    pass
+def add_header(file_path):
+    header_file_path = os.path.join(BASE_DIR, 'code_templates/header.py')
+    if os.path.exists(header_file_path):
+        with open(header_file_path, 'r') as hf, open(file_path, 'a') as cf:
+            for line in hf:
+                cf.write(line)
+            cf.closed
+            hf.closed
 
 
-def add_footer():
-    pass
+def add_footer(file_path):
+    footer_file_path = os.path.join(BASE_DIR, 'code_templates/footer.py')
+    if os.path.exists(footer_file_path):
+        with open(footer_file_path, 'r') as ff, open(file_path, 'a') as cf:
+            for line in ff:
+                cf.write(line)
+            cf.closed
+            ff.closed
 
 
 def make_dictionary(request):
@@ -97,11 +109,13 @@ def make_dictionary(request):
         'ukr': 'украинский'
     }
 
-    filename = 'all_sections.py'
+    filename = 'telegram_bot.py'
     file_path = os.path.join(BASE_DIR, filename)
     print(file_path)
     if os.path.exists(file_path):
         os.remove(file_path)
+
+    add_header(file_path)
 
     with open(file_path, 'a', encoding='utf-8') as f:
         f.write('# --------- ЗДЕСЬ ВЫБОР СТРАНЫ И РАЗДЕЛА ---------\n')
@@ -293,7 +307,9 @@ def make_dictionary(request):
                     'ДЕРЕВО ПО РАЗДЕЛАМ И СТРАНАМ ---------')
             f.closed
             print(f'{filename} - closed.')
-    # file_path = os.path.join(BASE_DIR, filename)
+
+    add_footer(file_path)
+
     path = open(file_path, 'r', encoding='utf-8')
     mime_type, _ = mimetypes.guess_type(file_path)
     response = HttpResponse(path, content_type=mime_type)
