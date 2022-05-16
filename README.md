@@ -1,2 +1,2 @@
 # FemBot
-FemPodmoga Bot
+FemPodmoga bot admin
